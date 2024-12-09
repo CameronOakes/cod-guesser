@@ -1,0 +1,52 @@
+  <h1>Click Jay on his wittle nosey wosey!</h1>
+  <div id="gameContainer">
+    <%= image_tag 'jay.png', id: 'gameImage', alt: 'Game Image', style: 'width: 500px; height: auto;' %>
+    <div id="marker" class="marker" style="display: none;"></div>
+  </div>
+  <button id="submitButton">Submit</button>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const image = document.getElementById('gameImage');
+      const marker = document.getElementById('marker');
+      const submitButton = document.getElementById('submitButton');
+      let lastClickPosition = null;
+
+      image.addEventListener('click', (event) => {
+        const rect = image.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+
+        lastClickPosition = { x, y };
+
+        console.log(`X: ${x}, Y: ${y}`);
+
+        // WHEN DEALING WITH THE DATA BASE, MAKE SURE THAT THE COORDS ARE SAVED CORECTLY, THE MARKERS HAVE A + LEFT 2.5 AND TOP + 75 TO MAKE THE MARKER LINE UP CORRECTLY
+
+        // Move and display the marker
+        marker.style.left = `${x + 2.5}px`; // Offset for centering marker
+        marker.style.top = `${y + 75}px`;
+        marker.style.display = 'block';
+      });
+
+      submitButton.addEventListener('click', () => {
+        if (lastClickPosition) {
+          fetch('/game/submit', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify(lastClickPosition)
+          })
+          .then(response => response.json())
+          .then(data => {
+            alert(data.message); // Show success or failure message
+          })
+          .catch(error => console.error('Error:', error));
+        } else {
+          alert('Please click on the image first!');
+        }
+      });
+    });
+  </script>

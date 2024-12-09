@@ -1,0 +1,13 @@
+#gameImage {
+  position: relative;
+  cursor: pointer;
+}
+
+.marker {
+  width: 10px;
+  height: 10px;
+  background-color: rgb(255, 54, 54);
+  border-radius: 50%;
+  position: absolute;
+  pointer-events: none;
+}
